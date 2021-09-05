@@ -24,14 +24,14 @@ CREDITCARDCVV = ''
 FIRSTNAME = ''
 LASTNAME = ''
 ADDRESSANDSTREET = ''  # make sure to put only the address and street (ex: 1234 Python St) in that exact form
-CITY = ''  
+CITY = ''
 STATE = ''  # make sure to put abbreviated form (ex: CA not ca or california or California, TX not tx or texas or Texas)
 ZIP = ''
-PRODUCTLINK = ''  # the link of your best buy product (ONLY BEST BUY PRODUCTS WILL WORK)
+PRODUCTLINK = ''
 LOCATIONOFCHROMEDRIVER = ''  # LOCATION OF YOUR CHROMEDRIVER AND MAKE SURE TO INSTALL SELENIUM --> INFO HERE: (https://www.youtube.com/watch?v=7R5n0sNSza8)
 
-
-# uncomment text order status button thing (contactInfoAndLocation function)
+SENDTEXTUPDATES = False  # 'True' or 'False' only; if True, the number entered above will recieve texts on the status of their orders. By default this is off.
+TESTMODE = True  # 'True' or 'False' only; if True, product will not be bought and text updates will be off. By default this is on.
 
 
 def findDateTime(textColor):
@@ -118,7 +118,8 @@ def contactInfoAndLocation(browser):
         try:
             browser.find_element_by_id('user.emailAddress').send_keys(f'{EMAIL}')
             browser.find_element_by_id('user.phone').send_keys(f'{PHONENUMBER}')
-            #browser.find_element_by_id('text-updates').click()                 # --> order updates tickbox <--
+            if SENDTEXTUPDATES and not TESTMODE:
+                browser.find_element_by_id('text-updates').click()
             browser.find_element_by_class_name('btn-secondary').click()  # enter info submit button
             print(f'Inputted contact info.  {findDateTime(color["GREEN"])}')
             return True, f'Inputted contact info.  {findDateTime(color["GREEN"])}'
@@ -150,22 +151,25 @@ def paymentInfo(browser):
             browser.find_element_by_id('payment.billingAddress.zipcode').send_keys(f'{ZIP}')
 
             # PLACE ORDER
-            browser.find_element_by_class_name('btn-primary').click()  # place order button
-
-            # CHECK IF MODAL ABOUT ADDRESS APPEARS (AFTER 1 SEC BECAUSE IT TAKES TIME TO POP UP)
-            time.sleep(1)
-            try:
-                browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div')
+            if not TESTMODE:
+                browser.find_element_by_class_name('btn-primary').click()  # place order button
+                # CHECK IF MODAL ABOUT ADDRESS APPEARS (AFTER 1 SECOND BECAUSE IT TAKES TIME TO POP UP)
+                time.sleep(1)
                 try:
-                    browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/button[1]').click()
+                    browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div')
+                    try:
+                        browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/button[1]').click()
+                    except NoSuchElementException:
+                        return False, f'Failed to find keep address button, restarted.  {findDateTime(color["RED"])}'
                 except NoSuchElementException:
-                    return False, f'Failed to find keep address button, restarted.  {findDateTime(color["RED"])}'
-            except NoSuchElementException:
-                print(f'Modal not found.  {findDateTime(color["DARKCYAN"])}')
+                    print(f'Modal not found.  {findDateTime(color["DARKCYAN"])}')
 
-            # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
-            print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
-            time.sleep(10000)  # this sleep function is not necessary, only used for testing
+                # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
+                print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
+            else:
+                print(f'Inputted all info, order was not placed {findDateTime(color["DARKCYAN"])}')
+                time.sleep(10000)
+
             return True, f'Inputted payment info.  {findDateTime(color["GREEN"])}'
         except NoSuchElementException:
             if paymentinfocount >= 60:
