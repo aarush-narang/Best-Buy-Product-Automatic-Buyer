@@ -163,7 +163,7 @@ def paymentInfo(browser):
                 print(f'Modal not found.  {findDateTime(color["DARKCYAN"])}')
 
             # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
-            print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
+            print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}') # this says "item(s)" because you CAN change the quantity when you are in the cart, I just didn't code it because this is for personal use, not scalping, so the quantity will remain 1
             time.sleep(10000) # this time.sleep is here because when all the running code is done, the window closes. when you are actually runnning this code you do not need this time.sleep
             return True, f'Inputted payment info.  {findDateTime(color["GREEN"])}'
         except NoSuchElementException:
