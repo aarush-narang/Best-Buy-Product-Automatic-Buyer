@@ -164,7 +164,7 @@ def paymentInfo(browser):
 
             # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
             print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
-            time.sleep(10000)
+            time.sleep(10000) # this time.sleep is here because when all the running code is done, the window closes. when you are actually runnning this code you do not need this time.sleep
             return True, f'Inputted payment info.  {findDateTime(color["GREEN"])}'
         except NoSuchElementException:
             if paymentinfocount >= 60:
