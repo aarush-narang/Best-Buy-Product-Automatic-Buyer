@@ -16,7 +16,7 @@ color = {
 }
 
 EMAIL = ''
-PHONENUMBER = ''
+PHONENUMBER = ''  # only the 10 digits of your phone number, not the +1 or whatever
 CREDITCARDNUMBER = ''
 CREDITCARDEXPDATEMONTH = ''  # make sure to put it as a 0 padded number (ex: 01 not 1, or 02 not 2)
 CREDITCARDEXPDATEYEAR = ''  # full year (ex: 2022 not 22, or 2019 not 19)
@@ -24,11 +24,12 @@ CREDITCARDCVV = ''
 FIRSTNAME = ''
 LASTNAME = ''
 ADDRESSANDSTREET = ''  # make sure to put only the address and street (ex: 1234 Python St) in that exact form
-CITY = ''
-STATE = ''
+CITY = ''  
+STATE = ''  # make sure to put abbreviated form (ex: CA not ca or california or California, TX not tx or texas or Texas)
 ZIP = ''
 PRODUCTLINK = ''
 LOCATIONOFCHROMEDRIVER = ''  # LOCATION OF YOUR CHROMEDRIVER AND MAKE SURE TO INSTALL SELENIUM --> INFO HERE: (https://www.youtube.com/watch?v=7R5n0sNSza8)
+
 
 # uncomment text order status button thing (contactInfoAndLocation function)
 
