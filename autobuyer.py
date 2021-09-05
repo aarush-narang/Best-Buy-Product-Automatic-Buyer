@@ -27,7 +27,7 @@ ADDRESSANDSTREET = ''  # make sure to put only the address and street (ex: 1234 
 CITY = ''  
 STATE = ''  # make sure to put abbreviated form (ex: CA not ca or california or California, TX not tx or texas or Texas)
 ZIP = ''
-PRODUCTLINK = ''
+PRODUCTLINK = ''  # the link of your best buy product (ONLY BEST BUY PRODUCTS WILL WORK)
 LOCATIONOFCHROMEDRIVER = ''  # LOCATION OF YOUR CHROMEDRIVER AND MAKE SURE TO INSTALL SELENIUM --> INFO HERE: (https://www.youtube.com/watch?v=7R5n0sNSza8)
 
 
