@@ -96,8 +96,8 @@ def contactInfoAndLocation(browser):
     contactinfocount = 1
     while True:
         try:
-            browser.find_element_by_id('user.emailAddress').send_keys(f'{EMAIL}')
-            browser.find_element_by_id('user.phone').send_keys(f'{PHONENUMBER}')
+            browser.find_element_by_id('user.emailAddress').send_keys(EMAIL)
+            browser.find_element_by_id('user.phone').send_keys(PHONENUMBER)
             if SENDTEXTUPDATES and not TESTMODE:
                 browser.find_element_by_id('text-updates').click()
             browser.find_element_by_class_name('btn-secondary').click()  # enter info submit button
@@ -117,20 +117,20 @@ def paymentInfo(browser):
     while True:
         try:
             # PAYMENT AND CONTACT INFO
-            browser.find_element_by_id('optimized-cc-card-number').send_keys(f'{CREDITCARDNUMBER}')
-            Select(browser.find_element_by_name('expiration-month')).select_by_visible_text(f'{CREDITCARDEXPDATEMONTH}')
-            Select(browser.find_element_by_name('expiration-year')).select_by_visible_text(f'{CREDITCARDEXPDATEYEAR}')
-            browser.find_element_by_id('credit-card-cvv').send_keys(f'{CREDITCARDCVV}')
+            browser.find_element_by_id('optimized-cc-card-number').send_keys(CREDITCARDNUMBER)
+            Select(browser.find_element_by_name('expiration-month')).select_by_visible_text(CREDITCARDEXPDATEMONTH)
+            Select(browser.find_element_by_name('expiration-year')).select_by_visible_text(CREDITCARDEXPDATEYEAR)
+            browser.find_element_by_id('credit-card-cvv').send_keys(CREDITCARDCVV)
 
-            browser.find_element_by_id('payment.billingAddress.firstName').send_keys(f'{FIRSTNAME}')
-            browser.find_element_by_id('payment.billingAddress.lastName').send_keys(f'{LASTNAME}')
+            browser.find_element_by_id('payment.billingAddress.firstName').send_keys(FIRSTNAME)
+            browser.find_element_by_id('payment.billingAddress.lastName').send_keys(LASTNAME)
 
-            browser.find_element_by_id('payment.billingAddress.street').send_keys(f'{ADDRESSANDSTREET}')
+            browser.find_element_by_id('payment.billingAddress.street').send_keys(ADDRESSANDSTREET)
             # click on random part of page to remove autocomplete suggestions of addresses
             browser.find_element_by_class_name('order-summary__label').click()
-            browser.find_element_by_id('payment.billingAddress.city').send_keys(f'{CITY}')
-            Select(browser.find_element_by_id('payment.billingAddress.state')).select_by_visible_text(f'{STATE}')
-            browser.find_element_by_id('payment.billingAddress.zipcode').send_keys(f'{ZIP}')
+            browser.find_element_by_id('payment.billingAddress.city').send_keys(CITY)
+            Select(browser.find_element_by_id('payment.billingAddress.state')).select_by_visible_text(STATE)
+            browser.find_element_by_id('payment.billingAddress.zipcode').send_keys(ZIP)
 
             # PLACE ORDER
             if not TESTMODE:
@@ -164,9 +164,9 @@ def paymentInfo(browser):
 
 def main():
     # chromedriver
-    browser = webdriver.Chrome(f'{LOCATIONOFCHROMEDRIVER}')
+    browser = webdriver.Chrome(LOCATIONOFCHROMEDRIVER)
 
-    browser.get(f'{PRODUCTLINK}')
+    browser.get(PRODUCTLINK)
 
     clickBuyButton(browser)
     browser.get('https://bestbuy.com/cart')
