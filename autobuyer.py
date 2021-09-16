@@ -191,7 +191,7 @@ def main():
         browser.close()
         print(paymentinforesponse[1])
         return main()
-    time.sleep(100)
+    time.sleep(100) # delay here to make sure order goes through in case of extreme traffic through their webpage
 
 if __name__ == '__main__':
     main()
