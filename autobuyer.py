@@ -24,14 +24,13 @@ CREDITCARDCVV = ''
 FIRSTNAME = ''
 LASTNAME = ''
 ADDRESSANDSTREET = ''  # make sure to put only the address and street (ex: 1234 Python St) in that exact form
-CITY = ''  
+CITY = ''
 STATE = ''  # make sure to put abbreviated form (ex: CA not ca or california or California, TX not tx or texas or Texas)
 ZIP = ''
-PRODUCTLINK = ''  # the link of your best buy product (ONLY BEST BUY PRODUCTS WILL WORK)
+PRODUCTLINK = ''
 LOCATIONOFCHROMEDRIVER = ''  # LOCATION OF YOUR CHROMEDRIVER AND MAKE SURE TO INSTALL SELENIUM --> INFO HERE: (https://www.youtube.com/watch?v=7R5n0sNSza8)
-
-
-# uncomment text order status button thing (contactInfoAndLocation function)
+SENDTEXTUPDATES = False  # 'True' or 'False' only; if True, the number entered above will receive texts on the status of their orders
+TESTMODE = False  # 'True' or 'False' only; if True, product will not be bought and text updates will be off
 
 
 def findDateTime(textColor):
@@ -56,25 +55,6 @@ def clickBuyButton(browser):
             browser.find_element_by_class_name('c-button-primary').click()
             print(f'Add to cart button was clicked.  {findDateTime(color["GREEN"])}')
             return
-
-
-def clickGoToCartButton(browser):
-    goToCartBtnCount = 1
-    while True:
-        try:
-            # If this comes out true then button is loaded
-            goToCartBtn = browser.find_element_by_class_name('go-to-cart-button')
-            goToCartBtn.click()
-            print(f'Go to cart button was clicked.  {findDateTime(color["GREEN"])}')
-            return True, f'Inside cart.  {findDateTime(color["GREEN"])}'
-        except NoSuchElementException:
-            # if button is not loaded:
-            if goToCartBtnCount >= 30:
-                return False, f'Failed to find go to cart button.  {findDateTime(color["RED"])}'
-            print(f'Go to cart button was not found, retrying.  {findDateTime(color["RED"])}')
-            goToCartBtnCount += 1
-            time.sleep(0.1)
-            continue
 
 
 def clickCheckoutButton(browser):
@@ -118,7 +98,8 @@ def contactInfoAndLocation(browser):
         try:
             browser.find_element_by_id('user.emailAddress').send_keys(f'{EMAIL}')
             browser.find_element_by_id('user.phone').send_keys(f'{PHONENUMBER}')
-            #browser.find_element_by_id('text-updates').click()                 # --> order updates tickbox <--
+            if SENDTEXTUPDATES and not TESTMODE:
+                browser.find_element_by_id('text-updates').click()
             browser.find_element_by_class_name('btn-secondary').click()  # enter info submit button
             print(f'Inputted contact info.  {findDateTime(color["GREEN"])}')
             return True, f'Inputted contact info.  {findDateTime(color["GREEN"])}'
@@ -145,27 +126,32 @@ def paymentInfo(browser):
             browser.find_element_by_id('payment.billingAddress.lastName').send_keys(f'{LASTNAME}')
 
             browser.find_element_by_id('payment.billingAddress.street').send_keys(f'{ADDRESSANDSTREET}')
+            # click on random part of page to remove autocomplete suggestions of addresses
+            browser.find_element_by_class_name('order-summary__label').click()
             browser.find_element_by_id('payment.billingAddress.city').send_keys(f'{CITY}')
             Select(browser.find_element_by_id('payment.billingAddress.state')).select_by_visible_text(f'{STATE}')
             browser.find_element_by_id('payment.billingAddress.zipcode').send_keys(f'{ZIP}')
 
             # PLACE ORDER
-            browser.find_element_by_class_name('btn-primary').click()  # place order button
-
-            # CHECK IF MODAL ABOUT ADDRESS APPEARS (AFTER 1 SEC BECAUSE IT TAKES TIME TO POP UP)
-            time.sleep(1)
-            try:
-                browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div')
+            if not TESTMODE:
+                browser.find_element_by_class_name('btn-primary').click()  # place order button
+                # CHECK IF MODAL ABOUT ADDRESS APPEARS (AFTER 1 SECOND BECAUSE IT TAKES TIME TO POP UP)
+                time.sleep(1)
                 try:
-                    browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/button[1]').click()
+                    browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div')
+                    try:
+                        browser.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/button[1]').click()
+                    except NoSuchElementException:
+                        return False, f'Failed to find keep address button, restarted.  {findDateTime(color["RED"])}'
                 except NoSuchElementException:
-                    return False, f'Failed to find keep address button, restarted.  {findDateTime(color["RED"])}'
-            except NoSuchElementException:
-                print(f'Modal not found.  {findDateTime(color["DARKCYAN"])}')
+                    print(f'Modal not found.  {findDateTime(color["DARKCYAN"])}')
 
-            # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
-            print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
-            time.sleep(10000)  # this sleep function is not necessary, only used for testing
+                # IF MODAL WAS THERE, KEEP ADDRESS BUTTON WAS CLICKED, IF MODAL WASNT THERE, ORDER WAS PLACED (MODAL SHOULD NOT APPEAR)
+                print(f'Inputted payment info and ordered item(s).  {findDateTime(color["GREEN"])}')
+            else:
+                print(f'Inputted all info, order was not placed {findDateTime(color["DARKCYAN"])}')
+                time.sleep(10000)
+
             return True, f'Inputted payment info.  {findDateTime(color["GREEN"])}'
         except NoSuchElementException:
             if paymentinfocount >= 60:
@@ -183,11 +169,8 @@ def main():
     browser.get(f'{PRODUCTLINK}')
 
     clickBuyButton(browser)
-    gotocartresponse = clickGoToCartButton(browser)
-    if not gotocartresponse[0]:
-        browser.close()
-        print(gotocartresponse[1])
-        return main()
+    browser.get('https://bestbuy.com/cart')
+    print(f'Inside Cart.  {findDateTime(color["GREEN"])}')
     clickcheckoutbuttonresponse = clickCheckoutButton(browser)
     if not clickcheckoutbuttonresponse[0]:
         browser.close()
@@ -208,7 +191,7 @@ def main():
         browser.close()
         print(paymentinforesponse[1])
         return main()
-
+    time.sleep(100)
 
 if __name__ == '__main__':
     main()
